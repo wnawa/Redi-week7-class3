@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import Home from './components/Home';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    <Router>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          {isLoggedIn ? (
+            <li>
+              <Link to="/dashboard">Dashboard</Link>
+            </li>
+          ) : null}
+        </ul>
+      </nav>
+      <Routes>
+        {/* Default Rout */}
+        <Route exact path="/" element={
+          isLoggedIn
+            ? <Navigate to="/dashboard" />
+            : <Home onLogin={handleLogin} />}>
+        </Route>
 
+        <Route path="/login" element={
+          isLoggedIn
+            ? <Navigate to="/dashboard" />
+            : <Login onLogin={handleLogin} />}>
+        </Route>
+
+        <Route path="/dashboard" element={
+          isLoggedIn
+            ? <Dashboard onLogout={handleLogout} />
+            : <Navigate to="/" />}>
+        </Route>
+
+      </Routes>
+    </Router>
+  );
+};
 export default App;
